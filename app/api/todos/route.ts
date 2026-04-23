@@ -1,3 +1,4 @@
+import { Int32 } from "mongodb"
 import clientPromise from "../../../lib/mongodb"
 import { NextResponse } from "next/server"
 
@@ -22,22 +23,28 @@ export async function POST(req: Request) {
   const client = await clientPromise
   const db = client.db("todo_db")
 
-  const lastTask = await db.collection("tasks").find().sort({ Id: -1 }).limit(1).next()
-  const nextId = (lastTask?.Id ?? lastTask?.id ?? 0) + 1
+  const idDocs = await db
+    .collection("tasks")
+    .find({}, { projection: { id: 1, Id: 1 } })
+    .toArray()
+  const nextId =
+    idDocs.reduce((max, t: { id?: number; Id?: number }) => {
+      return Math.max(max, t.Id ?? t.id ?? 0)
+    }, 0) + 1
 
   const newTask = {
-    Id: nextId,
-    Title: body.title ?? body.Title,
+    Id: new Int32(nextId),
+    Title: String(body.title ?? body.Title ?? ""),
     Description: body.description ?? body.Description ?? "",
-    Completed: body.completed ?? body.Completed ?? false
+    Completed: Boolean(body.completed ?? body.Completed ?? false)
   }
 
   await db.collection("tasks").insertOne(newTask)
 
   return NextResponse.json({
-    id: newTask.Id,
+    id: nextId,
     title: newTask.Title,
-    description: newTask.Description,
+    description: newTask.Description ?? "",
     completed: newTask.Completed
   })
 }
