@@ -19,6 +19,9 @@ Crie o arquivo `.env.local` na raiz:
 
 ```env
 MONGODB_URI=mongodb+srv://rodrigoprado:123@cluster0.jqwsmpj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+
+MONGODB_URI=mongodb://rodrigoprado:123@ac-yviepoy-shard-00-00.jqwsmpj.mongodb.net:27017,ac-yviepoy-shard-00-01.jqwsmpj.mongodb.net:27017,ac-yviepoy-shard-00-02.jqwsmpj.mongodb.net:27017/todo_db?ssl=true&authSource=admin&replicaSet=atlas-fbuvmf-shard-0&retryWrites=true&w=majority&appName=Cluster0
+
 JWT_SECRET=chave_super_segura_32_chars
 DEMO_USER=rodrigo
 DEMO_PASS=vini123
